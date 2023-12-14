@@ -58,11 +58,11 @@ public class ArcadeDrive extends CommandBase {
     // mode [aD|gyro] var in subsys, set by button in telePeriodic, used here.
     if (m_drivetrain.getGyroMode()) {// no turn possible, 2nd param unused.
       m_drivetrain.arcaGyve(-m_controller.getRawAxis(1) * 0.5,
-            m_controller.getRawAxis(0) * 0.4);
+            m_controller.getRawAxis(4) * 0.4);
       // System.out.println("using gyroMode");
     } else // normal control using left button speed, rt button turn
       m_drivetrain.arcaDriv(-m_controller.getRawAxis(1) * 0.6,
-            m_controller.getRawAxis(0)* 0.6);
+            m_controller.getRawAxis(4)* 0.6);
   } // end execute
 
   // Called once the command ends or is interrupted.

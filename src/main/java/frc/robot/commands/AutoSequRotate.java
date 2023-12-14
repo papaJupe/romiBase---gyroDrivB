@@ -16,8 +16,8 @@ public class AutoSequRotate extends SequentialCommandGroup {
    */
   public AutoSequRotate(Drivetrain drivetrain) {
     addCommands(
-        new TurnDegrGyro(0.6, 179, drivetrain), // turn CW
+        new TurnDegrGyro(0.6, 170, drivetrain), // turn CW
         new WaitCommand(5.0),
-        new TurnDegrGyro(0.6, -179, drivetrain));// turn CCW
+        new TurnDegrGyro(0.6, -170, drivetrain));// turn CCW
   }
 }  // end class

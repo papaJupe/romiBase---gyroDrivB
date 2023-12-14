@@ -1,6 +1,6 @@
-// RomiBase - gyroDrivB       final 9/23                     Robot.j
+// RomiBase - gyroDrivB       final 11/23                  Robot.j
 // mod of AM Base, some syntax simpler; keeps Cmd/Subsys framework, 
-// adds lambda 4 button cmds
+// adds lambda button cmds
 
 // gyroDriv v. B extends gyroDrvA [Lesson 5,9,11 exercise]; goal here:
 // use button w/ lambda to control Mode (from RC), mod auto TurnDegree()

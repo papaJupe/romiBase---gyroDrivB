@@ -16,11 +16,11 @@ public class AutonSequen extends SequentialCommandGroup {
   public AutonSequen(Drivetrain drivetrain) {
     addCommands(
         new DriveDistance(0.6, 36, drivetrain),
-        new WaitCommand(5.0),
+        new WaitCommand(4.0),
         new TurnDegrGyro(0.6, -178, drivetrain), // turn CCW
-        new WaitCommand(5.0),
+        new WaitCommand(4.0),
         new DriveDistance(0.6, 33, drivetrain),
-        new WaitCommand(5.0),
+        new WaitCommand(4.0),
         new TurnDegrGyro(0.6, 178, drivetrain));// turn CW
   }
 }  // end class

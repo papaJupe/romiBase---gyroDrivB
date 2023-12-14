@@ -21,14 +21,15 @@ public class TurnDegrGyro extends CommandBase {
    * (in degrees reported by gyro) at commanded z-speed
    * directly proportional to error (target minus now).
    * Degrees here all robot centric, 0 = bot's fwd pointing
+   * 
    * @param speed The speed to turn (+ = CW, - = CCW)
    * @param drive The drive subsystem to operate on
    */
-  // Constructor  -- relies on this being an auto-called cmd
+  // Constructor -- relies on this being an auto-called cmd
   public TurnDegrGyro(double speed, double degree, Drivetrain drive) {
-    // continuous neg gyro drift means CCW turns go < commanded, CW more
-    // auto init just reset all, so initial z should be close to 0;
-    // if target param is 0 stay where you are (current Z near zero).
+    // watch for large continuous gyro drift, recalibrate PRN
+    // auto init resets all, so initial z should be close to 0;
+    // if target param is 0, stay where you are.
     m_degreeTarg = degree != 0 ? degree : drive.getGyroAngleZ();
     m_speed = speed;
     m_drive = drive;
@@ -50,7 +51,7 @@ public class TurnDegrGyro extends CommandBase {
     // Set motors to stop, reset encoder & gyro to 0
     m_drive.arcaDriv(0, 0);
     m_drive.resetEncoders();
-    m_drive.resetGyro();  // calculations all assume start pos = 0 deg
+    m_drive.resetGyro(); // calculations all assume start pos = 0 deg
   }
 
   // Called every time cmd scheduler runs while this is scheduled.
@@ -61,28 +62,30 @@ public class TurnDegrGyro extends CommandBase {
 
     // target angle should always be <180, normal start position near 0
     double headingError = m_degreeTarg - m_drive.getGyroAngleZ();
-  // if target = 60 and gyro reads 75 deg (overshot targ), hE = -15
+    // if target = 60 and gyro reads 75 deg (overshot targ), hE = -15
 
-    // not needed for small error
+    // not needed for small error as with straight driving
     // if (headingError < -180)
     // headingError += 360;
     // if (headingError > 180)
     // headingError -= 360;
 
+    // handcrafted PID feedback processor:
     // P correction multiplier directly Proportional to angular error
     // -- feedsback to turning speed, reducing speed as error decreases
     if (Math.abs(headingError) > .25 * Math.abs(m_degreeTarg)) {
-      // fixed speed more stable for 1st 3/4 of turn than Proportional
-      turn_speed = Math.copySign(1,headingError) * m_speed;    
+      // fixed speed more stable for 1st 3/4 of turn than P feedback
+      turn_speed = Math.copySign(1, headingError) * m_speed;
     }
-           // transition zone -- add P (.003) and I factor [starts @ 0] 
+    // transition zone -- add P (.003) and I factor [starts @ 0]
     else if (Math.abs(headingError) > 0.15 * Math.abs(m_degreeTarg))
       turn_speed = (0.003 * headingError * m_speed) + .0001 * (Ifactor += headingError);
-          else // just Integral factor used to finish turn -- last 15%
+    else // just Integral factor used to finish turn -- last 15%
       turn_speed = .0002 * (Ifactor += headingError);
 
-    // neg # sent to arcaDriv is inverted to pos there, makes CCW correction 
-    // --i.e. I want neg hE via calc. of turnspeed to cause CCW turn
+    // neg # sent to arcaDriv is inverted to pos there, makes CCW correction;
+    // --i.e. I want neg hE via calc. of turnspeed to cause CCW turn, so I
+    // can leave this rotate param sign as is
     m_drive.arcaDriv(0, turn_speed);
 
   } // end execute
